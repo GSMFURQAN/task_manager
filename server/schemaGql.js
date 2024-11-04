@@ -1,34 +1,12 @@
-export const typeDefs = `
-  type Query {
-    users: [User]
-    user(_id:ID):[User]
-    cars:[Car]
-    usercars(_id:ID):[Car]
-  }
+import { gql } from 'graphql-tag';
+import { userTypeDefs } from './gqlSchemas/userTypeDefs.js';
+import { taskTypeDefs } from './gqlSchemas/taskTypeDefs.js';
+import { categoryTypeDefs } from './gqlSchemas/categoryTypeDefs.js';
 
-  type Mutation {
-  createUser(newuser:UserInput!):User
-  usersignin(userSignIn:UserSigninInput!):Token
-  createCar(carname:String!):String
-  }
 
-    type User{
-    _id:String
-    name:String
-    password: String
-    cars: [Car]
-    }
-    
-    type Car{
-    carname:String
-    _id:String}
-    
-    input UserInput {
-  name:String
-  password:String  }
+export const typeDefs = gql`
 
-  input UserSigninInput{
-  name:String password:String}
-
-  type Token{token:String}
+  ${userTypeDefs}
+  ${taskTypeDefs}
+ ${categoryTypeDefs}
 `;

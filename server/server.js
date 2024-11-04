@@ -17,6 +17,8 @@ mongoose.connection.on('error',(err)=>{
 
 import './models/User.js'
 import './models/Car.js'
+import './models/Task.js'
+import './models/Category.js'
 import { resolvers } from './resolvers.js';
 
 const context = ({ req }) => {
@@ -40,7 +42,11 @@ const startServer = async () => {
 
   const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
-    context
+    context,
+    cors: {
+      origin: ['http://localhost:3000'], // Allow your frontend origin
+      credentials: true, // Allow cookies or credentials
+    },
   });
   console.log(`🚀 Server ready at ${url}`);
 };
