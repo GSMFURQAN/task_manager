@@ -16,6 +16,14 @@ mutation signinUser($userSignIn: UserSigninInput!){
   }
 }
  `
+ 
+ export const EDIT_CATEGORY = gql`
+mutation edit_category($editedCategory: categoryInput){
+  editCategory(editedCategory: $editedCategory) {
+    _id, name
+  }
+}
+ `
 
  export const CREATE_CATEGORY = gql`
 mutation createCategory($newCategory: categoryInput) {
@@ -24,3 +32,18 @@ mutation createCategory($newCategory: categoryInput) {
     }
   }
  `
+
+ export const CREATE_TASK = gql`
+mutation createTask($newTask: taskInput!) {
+  createTask(newTask: $newTask) {
+    task
+  }
+}`
+
+export const COMPLETE_TASK = gql`
+mutation complete_task($taskvalues: completeTaskInput){
+  completeTask(taskvalues: $taskvalues) {
+    _id,
+    task
+  }
+}`

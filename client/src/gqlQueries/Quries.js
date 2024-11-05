@@ -17,3 +17,15 @@ export const GET_ALL_CATEGORIES = gql`
   }
 }
 `;
+
+export const FILTERED_TASKS = gql`
+query getFilteredTasks($category:String, $fromDate:String){
+  filteredTasks(category:$category, fromDate:$fromDate) {
+    _id,
+    category,
+    task,
+    dueDate,
+    done,
+    note,
+}
+}`

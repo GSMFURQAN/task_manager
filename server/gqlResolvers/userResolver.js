@@ -10,7 +10,7 @@ const Car = mongoose.model("Car")
 export const userResolvers = {
   Query: {
     users: async() => await User.find({}),
-    user: async(_, args) => await User.findOne(_id),
+    user: async(_, {_id}) => await User.findOne(_id),
   },
 
   Mutation: {

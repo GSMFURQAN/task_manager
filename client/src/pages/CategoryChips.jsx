@@ -22,6 +22,9 @@ export default function CategoryChips() {
   const [addCategory, setAddCategory] = React.useState('')
   const [openAddCategory, setOpenAddCategory] = React.useState(false)
   const { data, loading, error } = useQuery(GET_ALL_CATEGORIES)
+  const [createCategory, creation] = useMutation(CREATE_CATEGORY,{
+    refetchQueries:['GET_CATEGORIES']
+  })
 
   const [SelectedchipData, setSelectedChipData] = React.useState([]);
 
@@ -34,17 +37,20 @@ export default function CategoryChips() {
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-     
+     createCategory({
+      variables:{
+        newCategory: {name:addCategory}
+      }
+     })
     }
   }
   React.useEffect(()=>{
-    if(!loading){
+    if(!creation.loading){
       setTimeout(()=>{
-
         setOpenAddCategory(false)
       },1000)
     }
-  },[loading])
+  },[creation.loading])
   console.log('dx',data)
   const AddCategoryPopupContent =
     <>
@@ -54,7 +60,7 @@ export default function CategoryChips() {
         type="text"
         size="small"
         value={addCategory}
-        // onChange={(e) => setAddCategory(e.target.value)}
+        onChange={(e) => setAddCategory(e.target.value)}
         onKeyDown={handleKeyPress} />
         {data && <CircularProgress />}
         </Stack>
@@ -82,7 +88,7 @@ export default function CategoryChips() {
                 sx={{ mx: 0.5 }} icon={general.selectedCategories.includes(item.name) ? <CheckIcon /> : <AddIcon />}
                 size='small'
                 label={item.name}
-                onClick={handleSelectChips(item.name)}
+                onClick={handleSelectChips(item)}
                 disabled={general.selectedCategories.length > 2 || general.selectedCategories.includes(item.name)}
                 color={general.selectedCategories.includes(item.name) ? 'success' : ''}
               />

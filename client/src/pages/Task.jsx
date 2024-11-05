@@ -11,12 +11,15 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import dayjs from "dayjs";
+import { useMutation } from "@apollo/client";
+import { COMPLETE_TASK } from "../gqlQueries/Mutations";
 
 const Task = ({ todo, index }) => {
     const general = useSelector((state) => state.general)
     const dispatch = useDispatch();
     const [selectedId, setSelectedId] = React.useState();
-
+const [completeTask] = useMutation(COMPLETE_TASK, {refetchQueries:['getFilteredTasks']})
     const handleEditTodo = async (id) => {
 
     };
@@ -25,12 +28,19 @@ const Task = ({ todo, index }) => {
 
     };
     const handleChangeDone = async (id, done) => {
-
+completeTask({
+    variables:{
+        taskvalues:{
+            _id:id,
+            done: done ? false :true
+        }
+    }
+})
     };
     const handleAddNewTodo = () => {
 
     };
-
+    console.log('dtx', todo.task, dayjs(Number(todo.dueDate)).diff(dayjs(), "hours") )
     return (
         <div style={{ width: '100%' }}>
             {/* <Divider /> */}
@@ -53,24 +63,24 @@ const Task = ({ todo, index }) => {
                             <Typography my={'auto'} fontSize={12}>{index + 1}</Typography>
                             <Checkbox
                                 size="small"
-                                checked={0}
-                                onChange={() => handleChangeDone(todo.id, todo.done)}
+                                checked={todo.done}
+                                onChange={() => handleChangeDone(todo._id, todo.done)}
                             />
                             <Typography
                                 my={"auto"}
                                 style={{
-                                    // textDecoration: todo.done ? "line-through" : "capitalize",
+                                    textDecoration: todo.done ? "line-through" : "none",
                                 }}
                                 variant="h6"
                                 fontSize={13}
-                                color={`${1
+                                color={`${todo?.done
                                     ? "green"
-                                    : 'moment(todo.dueDate).diff(moment(), "hours") <= 0'
+                                    : dayjs(Number(todo.dueDate)).diff(dayjs(), "hours") <= 0
                                     ? "red"
                                         : "cyan"
                                     }`}
                             >
-                                {todo.title}
+                                {todo.task}
                             </Typography>
                         </Stack>
                         <Typography
@@ -78,7 +88,7 @@ const Task = ({ todo, index }) => {
                             maxWidth={{ xs: 100, sm: 200 }}
                             fontSize={12}
                         >
-                            Due date:  {todo?.dueDate}
+                            Due date:  { dayjs(Number(todo?.dueDate)).format('DD-MM-YYYY')}
                             {/* {moment(todo.dueDate).format("DD MMMM YYYY , hh:mm a")} */}
                         </Typography>
                     </Stack>

@@ -22,6 +22,9 @@ import {
 
 } from "@mui/x-date-pickers";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_ALL_CATEGORIES } from "../gqlQueries/Quries";
+import { CREATE_TASK } from "../gqlQueries/Mutations";
 
 const style = {
     position: "absolute",
@@ -53,100 +56,37 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
     const [fileUploadProgress, setFileUploadProgress] = useState(false);
     const [tabs, setTabs] = useState([]);
     const userData = JSON.parse(sessionStorage.getItem("account"));
-
+    const { data, loading, error } = useQuery(GET_ALL_CATEGORIES)
+    const [createTask, task] = useMutation(CREATE_TASK,{
+        refetchQueries:['getFilteredTasks']
+    })
+    console.log('gxxx', data)
     const [goalData, setGoalData] = React.useState({
-        title: "",
+        task: "",
+        done: false,
         note: "",
         dueDate: "",
-        subTasks: [],
-        major: false,
-        image: "",
         category: "",
-        docs: []
     });
-
-    // const handleFileUpload = async (file) => {
-    //     setFileUploadProgress(true);
-    //     try {
-    //         const downloadURL = await uploadFile(file);
-    //         console.log("File uploaded successfully:", downloadURL);
-    //         downloadURL && setGoalData({ ...goalData, image: downloadURL });
-    //         setFileUploadProgress(false);
-    //         // You can now use the downloadURL, e.g., set it in your state or send it to your backend
-    //     } catch (error) {
-    //         console.error("Error uploading file:", error);
-    //     }
-    // };
-
-    // const handleDocsUpload = async (file) => {
-    //     setFileUploadProgress(true);
-    //     try {
-    //         const downloadURL = await uploadFile(file);
-    //         console.log("File uploaded successfully:", downloadURL);
-    //         downloadURL && setGoalData({ ...goalData, docs: [...goalData.docs, downloadURL] });
-    //         setFileUploadProgress(false);
-    //         // You can now use the downloadURL, e.g., set it in your state or send it to your backend
-    //     } catch (error) {
-    //         console.error("Error uploading file:", error);
-    //     }
-    // };
-
-
+    console.log('sux',)
 
     const handleAdd = async () => {
-        // const days = moment(
-        //     id && goalData.dueDate.$d ? goalData.dueDate.$d : goalData.dueDate
-        // ).diff(moment(), "days");
-        // const goalView =
-        //     days < 1 ? "day" : days < 32 ? "month" : days < 366 ? "year" : "future";
-
-        // const payload = {
-        //     title: goalData.title,
-        //     note: goalData.note,
-        //     dueDate: goalData.dueDate,
-        //     done: false,
-        //     dayView: goalView,
-        //     parentId: "",
-        //     viewed: "NO",
-        //     major: goalData.major,
-        //     image: goalData.image,
-        //     userId: userData?.userId,
-        //     category: tabs.filter((x) => x.id == goalData?.category)[0],
-        //     docs: goalData.docs,
-        // };
-        // if (
-        //     general.action == "subTask" &&
-        //     moment(goalData.dueDate).toISOString() > general.dueDate
-        // ) {
-        //     dispatch(
-        //         selectSnack({
-        //             severity: "error",
-        //             message: "selcted date must be less than parent",
-        //             open: true,
-        //         })
-        //     );
-        // } else if (general.action == "edit") {
-        //     await updateTodo({ ...payload, _id: id }).then(async () => {
-        //         dispatch(fetchData({ dayView: general.dayView }));
-        //         dispatch(selectView({ ...general, id: "", action: "" }));
-        //     });
-        // } else if (general.action == "subTask") {
-        //     await addNewTodo({ ...payload, parentId: id, subTask: true }).then(() => {
-        //         dispatch(fetchData({ dayView: general.dayView }));
-        //         dispatch(selectView({ ...general, id: "", action: "" }));
-        //     });
-        // } else {
-        //     await addNewTodo(payload).then(() => {
-        //         dispatch(fetchData({ dayView: general.dayView }));
-        //     });
-        // }
-        // !loading &&
-        //     dispatch(
-        //         selectView({ ...general, id: "", action: "", addGoalOpen: false })
-        //     );
-        // setGoalData({});
-        // dispatch(getProgress({ dayView: general.dayView }));
+        createTask({
+            variables: {
+                newTask: {
+                    ...goalData,
+                }
+            }
+        })
     };
+
+    useEffect(() => {
+        if (!task.loading) {
+            setTimeout(()=>{
+                setOpen(false)
+            },1000)
+        }
+    }, [task.loading])
 
     useEffect(() => {
         return () => { };
@@ -166,7 +106,7 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                     <Stack display={"flex"} direction={"column"} spacing={2}>
                         <Select
                             size="small"
-                            sx={{ marginTop: "9px", color: 'white', maxWidth: { md: '50%', sm: '100%', lg: '60%' } }}
+                            sx={{ marginTop: "9px", color: 'white', maxWidth: { md: '50%', sm: '80%', lg: '60%' } }}
                             value={goalData.category}
                             label="Category"
                             onChange={(e) =>
@@ -175,9 +115,9 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                             labelId="demo-select-small-label"
                             id="demo-select-small"
                         >
-                            {tabs.map((option) => (
-                                <MenuItem key={option.id} value={option.id}>
-                                    {option.label}
+                            {data && data.categories.map((option) => (
+                                <MenuItem key={option._id} value={option.name}>
+                                    {option.name}
                                 </MenuItem>
                             ))}
                         </Select>
@@ -185,9 +125,9 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                             label="Task"
                             type="text"
                             size="small"
-                            sx={{ maxWidth: { md: '50%', sm: '100%', lg: '60%' } }}
+                            sx={{ maxWidth: { md: '50%', sm: '80%', lg: '60%' } }}
 
-                            value={goalData.title}
+                            value={goalData.task}
                             onChange={(e) =>
                                 setGoalData({ ...goalData, task: e.target.value })
                             }
@@ -195,7 +135,9 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <Box>
                                 <DemoContainer components={['DateTimePicker']}  >
-                                    <DateTimePicker label="DueDate Date"  sx={{maxWidth: { md: '50%', sm: '100%', lg: '60%' } }}
+                                    <DateTimePicker label="DueDate Date" sx={{ maxWidth: { md: '50%', sm: '80%', lg: '60%' } }}
+                                        value={goalData.e}
+                                        onChange={(e) => setGoalData({ ...goalData, dueDate: e.$d })}
                                     />
                                 </DemoContainer>
                             </Box>
@@ -214,7 +156,6 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                         />
 
                     </Stack>
-
 
                     <Stack
                         pt={2}
@@ -235,7 +176,7 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                             onClick={() => handleAdd()}
                             color="primary"
                         >
-                            {!fileUploadProgress ? "Add" : "image uploading..."}
+                            {!task.loading ? "Add" : "Creating new task..."}
                         </Button>
                     </Stack>
 

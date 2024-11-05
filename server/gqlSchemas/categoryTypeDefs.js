@@ -5,6 +5,7 @@ categories: [Category]
 
 type Mutation{
 createCategory(newCategory:categoryInput):Category
+editCategory(editedCategory:categoryInput):Category
 }
 
 type Category{
@@ -13,6 +14,7 @@ name:String
 }
 
 input categoryInput{
+_id:String
 name:String
 }
 `
