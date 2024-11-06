@@ -33,52 +33,63 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const TopFilters = () => {
     const [open, setOpen] = useState(false)
-    const general = useSelector((state)=>state.general)
-const [dateFilters, setDateFilters] = useState({
-    fromDate:dayjs().startOf('day').toDate(),
-    toDate:''
-})
-const dispatch = useDispatch()
+    const general = useSelector((state) => state.general)
+    const [dateFilters, setDateFilters] = useState({
+        fromDate: dayjs().startOf('day').toDate(),
+        toDate: ''
+    })
+    const dispatch = useDispatch()
     const handleAddTask = () => {
         setOpen(true)
     }
 
- useEffect(()=>{
-    dispatch(selectState({...general, dateFilters}))
- },[dateFilters])
+    useEffect(() => {
+        dispatch(selectState({ ...general, dateFilters }))
+    }, [dateFilters])
     return (
         <div style={{ padding: '3px 0px' }}>
             <Stack direction={'row'}>
-                <Stack display={'flex'} direction={'column'} spacing={1} width={{ lg: '70%', md: '70%', sm: '96%', xs: '96%' }} ml={{ xs: 1, sm: 1, md: 4, lg: 4 }}>
-                    <Stack display={'flex'} direction={{ xs: 'row', sm: 'row' }}>
+                <Stack display={'flex'} direction={'column'} spacing={1} width={{ lg: '70%', md: '70%', sm: '96%', xs: '96%' }} ml={{ xs: 0.5, sm: 0.5, md: 4, lg: 4 }}>
+                    <Stack display={'flex'} direction={{ xs: 'row', sm: 'row', lg: 'column', md: 'column' }}>
 
-                        <Stack direction={{ lg: 'row', md: 'row', sm: 'column', xs: 'column' }} display='flex' justifyContent='space-between' width={{ lg: '100%', md: '100%', sm: '60%', xs: '60%' }} >
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={['DateTimePicker']}   >
+                                <Stack direction={{ lg: 'row', md: 'row', sm: 'column', xs: 'column' }} display='flex' justifyContent='space-between' height={'auto'} width={'100%'} spacing={1.5}>
+                                    <Box>
 
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <Box mx={1}>
-                                    <DemoContainer components={['DateTimePicker']}   >
-                                        <DateTimePicker label="From Date"   value={dayjs(dateFilters?.fromDate)}
-                                        onChange={(e) => setDateFilters({ ...dateFilters, fromDate: e.$d })}/>
-                                    </DemoContainer>
-                                </Box>
-                                <Box >
-                                    <DemoContainer components={['DateTimePicker']} >
-                                        <DateTimePicker label="To Date"   value={dayjs(dateFilters?.toDate)}
-                                        onChange={(e) => setDateFilters({ ...dateFilters, toDate: e.$d })}/>
-                                    </DemoContainer>
-                                </Box>
-                            </LocalizationProvider>
-                            <div style={{ margin: 'auto' }}>
-                                <MyButton text={'Add Task'} color={'primary'} size={'md'} handleClick={handleAddTask} startIcon={<AddIcon />} />
-                            </div>
-                        </Stack>
+                                        <DateTimePicker label="From Date" value={dayjs(dateFilters?.fromDate)}
+                                            onChange={(e) => setDateFilters({ ...dateFilters, fromDate: e.$d })}
+                                            sx={{
+                                                '.MuiInputBase-root': {
+                                                    // width: { md: '100%', sm: '98%', xs: '98%', lg: '100%' }, // Adjust width here
+                                                    height: { xs: '40px', sm: '40px', lg: 'auto', md: 'auto' }, // Adjust height here
+                                                },
+                                            }} />
+
+                                    </Box>
+                                    <Box>
+                                        <DateTimePicker label="To Date" value={dayjs(dateFilters?.toDate)}
+                                            onChange={(e) => setDateFilters({ ...dateFilters, toDate: e.$d })}
+                                            sx={{
+                                                '.MuiInputBase-root': {
+                                                    // width: { md: '100%', sm: '98%', xs: '98%', lg: '100%' }, // Adjust width here
+                                                    height: { xs: '40px', sm: '40px', lg: 'auto', md: 'auto' }, // Adjust height here
+                                                },
+                                            }} />
+                                    </Box>
+                                    <Box m={{ lg: 'auto', md: 'auto' }}>
+                                        <MyButton text={'Add Task'} color={'primary'} size={'small'} handleClick={handleAddTask} startIcon={<AddIcon />} />
+                                    </Box>
+                                </Stack>
+                            </DemoContainer>
+                        </LocalizationProvider>
                         <Box display={{ xs: 'block', sm: 'block', lg: 'none', md: 'none' }}>
                             <Stats />
                         </Box>
                     </Stack>
                     <CategoryChips />
                 </Stack>
-                <Box display={{ xs: 'none', sm:'none', md:'block',lg:'block' }}>
+                <Box display={{ xs: 'none', sm: 'none', md: 'block', lg: 'block' }}>
                     <Stats />
                 </Box>
             </Stack>

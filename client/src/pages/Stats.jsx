@@ -60,7 +60,7 @@ legend: {
           breakpoint: 480,
           options: {
             chart: {
-              width: 200,
+              width: 174,
             },
             legend: {
               position: "bottom",
@@ -85,7 +85,6 @@ legend: {
       }));
     }
   }, [category, completed, pending, elapsed]);
-  console.log('deeee',filteredTasks, data.series)
   const theme = useTheme();
   const isNotSmallScreen = useMediaQuery(theme.breakpoints.up("md"));
 
@@ -96,13 +95,13 @@ legend: {
 
   return (
     <div className="donut">
-        <Stack direction={'row'} spacing={1} mx={4}>
+        <Stack direction={'row'} spacing={1} mx={{lg:4,md:4,sm:1,xs:1}}>
 
             <Typography variant="subtitle2">Category : </Typography>
             <Select
             variant="standard"
                             size="small"
-                            sx={{ marginTop: "9px", color: 'white', width:'50%'  }}
+                            sx={{ marginTop: "9px", color: 'white', width:'48%'  }}
                             value={category}
                             label="Category"
                             onChange={(e) =>

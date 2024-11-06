@@ -5,6 +5,7 @@ import {
     Checkbox,
     Divider,
     Stack,
+    Tooltip,
     Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -13,9 +14,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import dayjs from "dayjs";
 import { useMutation } from "@apollo/client";
-import { COMPLETE_TASK, DELETE_TASK } from "../gqlQueries/Mutations";
+import { COMPLETE_TASK, DELETE_TASK, EDIT_TASK } from "../gqlQueries/Mutations";
 import AddTask from "../MyComponents/AddTask";
-
+import { NavigateNext } from "@mui/icons-material";
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 const Task = ({ todo, index }) => {
     const general = useSelector((state) => state.general)
     const dispatch = useDispatch();
@@ -25,11 +27,9 @@ const Task = ({ todo, index }) => {
     const [deleteTask] = useMutation(DELETE_TASK, {
         refetchQueries: ['getFilteredTasks']
     })
-
-
-    const handleEditTodo = async (id) => {
-
-    };
+    const [editTask, editedTask] = useMutation(EDIT_TASK, {
+        refetchQueries: ['getFilteredTasks']
+    })
 
     const handleDeleteTask = async (id) => {
         deleteTask({
@@ -48,9 +48,21 @@ const Task = ({ todo, index }) => {
             }
         })
     };
-    const handleAddNewTodo = () => {
 
-    };
+    const handledueDateChange = (movement) => {
+
+        editTask({
+            variables: {
+                task: {
+                    _id: todo._id,
+                    taskDetails: {
+
+                        dueDate: movement == 'forward' ? dayjs(Number(todo.dueDate)).add(1, 'day').format('YYYY-MM-DD HH:mm:ss') : dayjs(Number(todo.dueDate)).subtract(1, 'day').format('YYYY-MM-DD HH:mm:ss')
+                    }
+                }
+            }
+        })
+    }
 
     return (
         <div style={{ width: '100%' }}>
@@ -60,7 +72,7 @@ const Task = ({ todo, index }) => {
                 key={todo.id}
                 borderRadius={4}
                 mx={1}
-                px={1.5}
+                pl={1.5}
                 onMouseOver={() => setSelectedId(todo._id)}
                 onMouseLeave={() => setSelectedId(todo._id)}
             >
@@ -81,7 +93,7 @@ const Task = ({ todo, index }) => {
                                 my={"auto"}
                                 style={{
                                     textDecoration: todo.done ? "line-through" : "none",
-                                    textTransform: 'capitalize'
+                                    textTransform: 'capitalize',
                                 }}
                                 variant="h6"
                                 fontSize={13}
@@ -95,19 +107,27 @@ const Task = ({ todo, index }) => {
                                 {todo.task}
                             </Typography>
                         </Stack>
-                        <Typography
-                            my={"auto"}
-                            fontSize={12}
-                        >Due date: <span style={{
-                            color: todo?.done
-                                ? "green"
-                                : dayjs(Number(todo.dueDate)).diff(dayjs(), "hours") <= 0
-                                    ? "red"
-                                    : "cyan"
-                        }}>
-                                {dayjs(Number(todo?.dueDate)).format('DD-MM-YYYY')}
-                            </span>
-                        </Typography>
+                        <Stack direction={'row'} spacing={0}>
+                            <Tooltip title="Move task to previous day">
+                                <ChevronLeftIcon sx={{ m: 'auto' }} onClick={() => handledueDateChange('back')} fontSize="small" cursor='pointer' />
+                            </Tooltip>
+                            <Typography
+                                my={"auto"}
+                                fontSize={12}
+                            >Due date: <span style={{
+                                color: todo?.done
+                                    ? "green"
+                                    : dayjs(Number(todo.dueDate)).diff(dayjs(), "hours") <= 0
+                                        ? "red"
+                                        : "cyan"
+                            }}>
+                                    {dayjs(Number(todo?.dueDate)).format('DD-MM-YYYY')}
+                                </span>
+                            </Typography>
+                            <Tooltip title="Move task to next day">
+                                <NavigateNext sx={{ m: 'auto' }} onClick={() => handledueDateChange('forward')} fontSize="small" cursor='pointer' />
+                            </Tooltip>
+                        </Stack>
                     </Stack>
 
                     <Stack

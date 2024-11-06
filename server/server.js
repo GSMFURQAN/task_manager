@@ -23,6 +23,7 @@ import { resolvers } from './resolvers.js';
 
 const context = ({ req }) => {
   const { authorization } = req.headers;
+  console.log('dert',authorization)
   if (authorization) {
     try {
       const { userId } = jwt.verify(authorization, JWT_SECRET);
@@ -44,7 +45,7 @@ const startServer = async () => {
     listen: { port: 4000 },
     context,
     cors: {
-      origin: ['http://localhost:3000'], // Allow your frontend origin
+      origin:'*', // Allow your frontend origin
       credentials: true, // Allow cookies or credentials
     },
   });

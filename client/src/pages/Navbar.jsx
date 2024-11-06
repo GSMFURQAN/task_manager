@@ -50,9 +50,8 @@ function Navbar() {
 
     return (
         <AppBar position="static">
-            {/* <Container maxWidth="xl"> */}
             <  >
-                <Stack display={'flex'} justifyContent={'space-between'} direction={'row'} width={'97%'} p={1} mx={{ sm: 1, md: 3, lg: 3, xl: 3 }}>
+                <Stack display={'flex'} justifyContent={'space-between'} direction={'row'} width={{xs:'100%', sm:'100%',lg:'97%', md:'97%'}} p={1} mx={{ sm: 0, xs:0, md: 3, lg: 3, xl: 3 }}>
                     <Stack spacing={3} direction={'row'}>
                         <img width={36} height={36} src={`to-do-list.png`} />
                         <Typography
@@ -71,8 +70,8 @@ function Navbar() {
                     </Stack>
 
                     <Stack direction={'row'} spacing={2}>
-                        <Typography fontSize={'14px'} style={{ margin: 'auto 6px' }}
-                        >{dayjs().format('dddd DD-MM-YYYY')}</Typography>
+                        <Typography fontSize={'14px'} style={{ margin: 'auto 3px' }}
+                        >{dayjs().format('ddd DD-MM-YYYY')}</Typography>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <img width={36} height={36} src={`https://robohash.org/${Math.random() / 100}.png`} />
@@ -103,7 +102,6 @@ function Navbar() {
                     </Stack>
                 </Stack>
             </>
-            {/* </Container> */}
         </AppBar>
     );
 }

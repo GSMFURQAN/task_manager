@@ -129,14 +129,18 @@ const AddTask = ({ id, selectedDate, open, setOpen, editData }) => {
                             }
                         />
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <Box>
                                 <DemoContainer components={['DateTimePicker']}  >
-                                    <DateTimePicker label="DueDate Date" sx={{ maxWidth: { md: '50%', sm: '80%', lg: '60%' } }}
+                                    <DateTimePicker label="DueDate Date"
                                         value={dayjs(goalData?.dueDate)}
+                                        sx={{
+                                            '.MuiInputBase-root': {
+                                                width: { md: '50%', sm: '88%',xs:'88%', lg: '62%' } , // Adjust width here
+                                              height: '40px', // Adjust height here
+                                            },
+                                          }}
                                         onChange={(e) => setGoalData({ ...goalData, dueDate: e.$d })}
                                     />
                                 </DemoContainer>
-                            </Box>
                         </LocalizationProvider>
                         <TextField
                             multiline

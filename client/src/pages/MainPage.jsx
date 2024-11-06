@@ -11,7 +11,7 @@ const MainPage = () => {
         <div>
             <Stack display={'flex'} direction={'row'} justifyContent={'flex-start'} mx={{lg:6,md:6, sm:2,xs:2}}>
                 {general?.selectedCategories?.map((x) => (
-                    <Box sx={{ minHeight: '100%', border: '2px solid green', borderRadius: 2, width: '100%', mx: 2, my: 1,  minWidth: '28vw' }} maxWidth= {{lg:'28vw', md:'28vw',sm:'100vw',xs:'98vw'}}>
+                    <Box sx={{ minHeight: '100%', border: '2px solid green', borderRadius: 2, width: '100%', mx: 2, my: 1,  minWidth: '28vw' }} maxWidth= {{lg:'30vw', md:'30vw',sm:'98vw',xs:'98vw'}}>
                         <MainTabs item={x} />
                     </Box>
                 ))}
