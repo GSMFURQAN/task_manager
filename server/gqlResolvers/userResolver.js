@@ -2,7 +2,6 @@ import brcypt from "bcryptjs";
 import mongoose from "mongoose";
 import jwt from 'jsonwebtoken'
 import { GraphQLError } from 'graphql'
-import { JWT_SECRET } from "../config.js";
 
 const User = mongoose.model("User");
 const Car = mongoose.model("Car")
@@ -42,7 +41,7 @@ export const userResolvers = {
          if (!decodedPassword) {
            throw new Error('User credentials don"t match');
          }
-         const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
          return { token };
       } catch (error) {
          console.error("Error in usersignin:", error);
