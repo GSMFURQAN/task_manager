@@ -50,7 +50,7 @@ const startServer = async () => {
   app.use(
     '/graphql',
     cors({
-      origin: ['http://localhost:3000', 'https://task-manager-hazel-kappa.vercel.app/login'],
+      origin: ['http://localhost:3000', 'https://task-manager-hazel-kappa.vercel.app'],
       credentials: true,
     }),
     express.json(),
