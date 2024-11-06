@@ -4,27 +4,26 @@ import { typeDefs } from './schemaGql.js';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET, MongoUrl } from './config.js';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import './models/User.js';
 import './models/Car.js';
 import './models/Task.js';
 import './models/Category.js';
 import { resolvers } from './resolvers.js';
-import path from 'path'
-import { fileURLToPath } from 'url';
 
-
-
-if(process.env.NODE_ENV !== 'production'){
-  dotenv.config()
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
 }
-const port = process.env.PORT || 4000
-// Connect to MongoDB
-mongoose.connect(process.env.MongoUrl, {})
-  .then(() => console.log('DB connected Sir'))
-  .catch(err => console.log('DB connection failed Sir ', err));
 
-// Context middleware for authorization
+const port = process.env.PORT || 4000;
+
+mongoose.connect(MongoUrl, {})
+  .then(() => console.log('DB connected'))
+  .catch(err => console.log('DB connection failed:', err));
+
 const context = ({ req }) => {
   const { authorization } = req.headers;
   if (authorization) {
@@ -35,13 +34,10 @@ const context = ({ req }) => {
       console.log("Token verification failed:", err);
     }
   }
-  return {};  // Return an empty object if no token or verification fails
+  return {};
 };
 
-// Initialize Express app
 const app = express();
-
-// Set up Apollo Server with Express
 const startServer = async () => {
   const server = new ApolloServer({
     typeDefs,
@@ -54,32 +50,24 @@ const startServer = async () => {
     app,
     path: '/graphql',
     cors: {
-      origin: '*', // Allow frontend origins
-      credentials: true, // Allow cookies or credentials
+      origin: ['http://localhost:3000', 'https://task-manager-hazel-kappa.vercel.app/login'],
+      credentials: true,
     },
   });
 
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
 
-  // Manually define __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+    app.get('*', (req, res) => {
+      res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+    });
+  }
 
-
-// app.use('/',(req,res)=>{
-//   res.send('Booom')
-// })
-  // if we're in production serve build/index.html file on local server
-//  if(process.env.NODE_ENV == 'production'){
-  app.use(express.static(path.resolve(__dirname, '..', 'client', 'build')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '..', 'client', 'build', 'index.html'));
-  });
-//  }
-
-  // Start the Express server
   app.listen(port, () => {
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+    console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`);
   });
 };
 
- await startServer();
+startServer();
