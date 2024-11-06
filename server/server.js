@@ -7,6 +7,7 @@ import { JWT_SECRET, MongoUrl } from './config.js';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { expressMiddleware } from '@apollo/server/express4';
 
 import './models/User.js';
 import './models/Car.js';
@@ -46,14 +47,15 @@ const startServer = async () => {
   });
 
   await server.start();
-  server.applyMiddleware({
-    app,
-    path: '/graphql',
-    cors: {
+  app.use(
+    '/graphql',
+    cors({
       origin: ['http://localhost:3000', 'https://task-manager-hazel-kappa.vercel.app/login'],
       credentials: true,
-    },
-  });
+    }),
+    express.json(),
+    expressMiddleware(server),
+  );
 
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
