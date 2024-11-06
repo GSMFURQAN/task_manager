@@ -82,4 +82,4 @@ app.use('/',(req,res)=>{
   });
 };
 
-startServer();
+ await startServer();
