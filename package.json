@@ -4,7 +4,9 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server/server.js",
+    "dev": "nodemon server/server.js",
+    "build": "npm i && npm i --prefix client && npm run build --prefix client"
   },
   "author": "",
   "license": "ISC",
