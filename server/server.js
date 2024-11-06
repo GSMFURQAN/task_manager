@@ -53,10 +53,10 @@ const startServer = async () => {
   server.applyMiddleware({
     app,
     path: '/graphql',
-    cors: {
-      origin: ['http://localhost:3000', 'http://192.168.29.128:3000'], // Allow frontend origins
-      credentials: true, // Allow cookies or credentials
-    },
+    // cors: {
+    //   origin: ['http://localhost:3000', 'http://192.168.29.128:3000'], // Allow frontend origins
+    //   credentials: true, // Allow cookies or credentials
+    // },
   });
 
 
