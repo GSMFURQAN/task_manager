@@ -9,13 +9,15 @@ const style = {
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
-    borderRadius:2,
+    borderRadius: 2,
     p: 2,
 }
-const MyPopup = ({ open, onClose, content, addStyles }) => {
+const MyPopup = ({ open, setOpen, content, addStyles }) => {
     return (
-        <Modal open={open} onClose={onClose}>
-            <Box sx={{...style, ...addStyles}}        >
+        <Modal open={open} onClose={() => {
+            setOpen(false)
+        }}>
+            <Box sx={{ ...style, ...addStyles }}        >
                 {content}
             </Box>
         </Modal>

@@ -7,6 +7,8 @@ export const taskTypeDefs = `
   type Mutation {
     createTask(newTask:taskInput!):Task
     completeTask(taskvalues:completeTaskInput):Task
+    editTask(task:editTaskInput):Task
+    deleteTask(_id:String):String
   }
 
     type Task{
@@ -18,17 +20,25 @@ export const taskTypeDefs = `
     category:String
     }
    
+    input TaskDetailsInput {
+  task: String
+  note: String
+  dueDate: String
+  done: Boolean
+  category: String
+}
     input taskInput{
-    task:String
-    note:String
-    dueDate: String
-    done:Boolean
-    category:String
+   taskDetails: TaskDetailsInput
     }
 
     input completeTaskInput{
     _id:String
     done:Boolean
+    }
+    
+    input editTaskInput{
+    _id:String
+    taskDetails: TaskDetailsInput
     }
         
     

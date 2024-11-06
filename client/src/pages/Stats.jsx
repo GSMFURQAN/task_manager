@@ -1,9 +1,21 @@
+import { useQuery } from "@apollo/client";
 import { useTheme } from "@emotion/react";
-import { Box, Button, Stack, Switch, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, MenuItem, Select, Stack, Switch, Typography, useMediaQuery } from "@mui/material";
 import React, { Component, useEffect, useMemo, useState } from "react";
 import Chart from "react-apexcharts";
+import { FILTERED_TASKS, GET_ALL_CATEGORIES } from "../gqlQueries/Quries";
+import dayjs from "dayjs";
+import { useSelector } from "react-redux";
 
 const Stats = () => {
+  const [category, setCategory] = useState('')
+  const general = useSelector(state => state.general)
+  const categoryList = useQuery(GET_ALL_CATEGORIES)
+  const filteredTasks = useQuery(FILTERED_TASKS, {
+    variables: {
+        category,
+    }
+})
     const [data, setData] = useState({
         options: {
             labels: ["Completed", "Pending", "Elapsed"],
@@ -57,28 +69,57 @@ legend: {
         },
       ],
     },
-    series:[3,4,6]
+    series:[  ]
   });
 
-  
+
+  const completed = useMemo(() => filteredTasks?.data?.filteredTasks?.filter((x) => x.done === true).length );
+  const pending = useMemo(() => filteredTasks?.data?.filteredTasks?.filter((x) => x.done === false && dayjs(Number(x.dueDate)).diff(dayjs(), "hours") > 0).length);
+  const elapsed = useMemo(() => filteredTasks?.data?.filteredTasks?.filter((x) => x.done === false && dayjs(Number(x.dueDate)).diff(dayjs(), "hours") <= 0 ).length);
+
+  useEffect(() => {
+    if (filteredTasks?.data?.filteredTasks) {
+      setData((prevData) => ({
+        ...prevData,
+        series: [completed, pending, elapsed],
+      }));
+    }
+  }, [category, completed, pending, elapsed]);
+  console.log('deeee',filteredTasks, data.series)
   const theme = useTheme();
   const isNotSmallScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   const [open, setOpen] = React.useState(false);
   const [checked, setChecked] = React.useState(false);
- 
-
-  const completed = 2
-  const pending =4
-  const elapsed =1
 
   
 
   return (
     <div className="donut">
-      {1 && (
-          <Stack width={"20%"} position={"relative"} pl={1}>
-            <Typography>Stats : </Typography>
+        <Stack direction={'row'} spacing={1} mx={4}>
+
+            <Typography variant="subtitle2">Category : </Typography>
+            <Select
+            variant="standard"
+                            size="small"
+                            sx={{ marginTop: "9px", color: 'white', width:'50%'  }}
+                            value={category}
+                            label="Category"
+                            onChange={(e) =>
+                              setCategory(e.target.value)
+                            }
+                            labelId="demo-select-small-label"
+                            id="demo-select-small"
+                            >
+                            {general && general?.selectedCategories?.map((option) => (
+                              <MenuItem key={option._id} value={option.name} sx={{fontSize:'14px'}}>
+                                  <Typography sx={{fontSize:'14px'}}>{option.name}
+                                    </Typography>  
+                                </MenuItem>
+                            ))}
+                        </Select>
+                            </Stack>
+          <Stack width={"100%"} position={"relative"} pl={1}>
           <Chart
             options={data?.options}
             series={data?.series}
@@ -86,7 +127,6 @@ legend: {
             width="290"
           />
         </Stack>
-      )}
     </div>
   );
 };

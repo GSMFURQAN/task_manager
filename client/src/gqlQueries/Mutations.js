@@ -47,3 +47,20 @@ mutation complete_task($taskvalues: completeTaskInput){
     task
   }
 }`
+
+export const EDIT_TASK = gql`
+mutation editTask($task: editTaskInput){
+  editTask(task: $task) {
+    _id,task
+  }
+}`
+
+export const DELETE_TASK = gql`
+mutation delete_task($id: String){
+  deleteTask(_id: $id)
+}`
+
+export const DELETE_CATEGORY = gql`
+mutation delete_category($id: String){
+  deleteCategory(_id: $id)
+}`

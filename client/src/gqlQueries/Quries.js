@@ -19,8 +19,8 @@ export const GET_ALL_CATEGORIES = gql`
 `;
 
 export const FILTERED_TASKS = gql`
-query getFilteredTasks($category:String, $fromDate:String){
-  filteredTasks(category:$category, fromDate:$fromDate) {
+query getFilteredTasks($category:String, $fromDate:String, $toDate:String){
+  filteredTasks(category:$category, fromDate:$fromDate, toDate:$toDate) {
     _id,
     category,
     task,

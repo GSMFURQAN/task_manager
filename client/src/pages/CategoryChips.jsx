@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import TagFacesIcon from '@mui/icons-material/TagFaces';
-import { Box, CircularProgress, Stack, TextField, Typography } from '@mui/material';
+import { Box, CircularProgress, Stack, TextField, Typography, useMediaQuery } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,13 +27,16 @@ export default function CategoryChips() {
   })
 
   const [SelectedchipData, setSelectedChipData] = React.useState([]);
-
+  const isSmallScreen = useMediaQuery('(max-width:800px)');
   const handleSelectChips = (chips) => () => {
     // setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
     // setSelectedChipData([...SelectedchipData, chips.label])
-    dispatch(selectState({ selectedCategories: [...general.selectedCategories, chips] }))
+    if(isSmallScreen){
+      dispatch(selectState({...general, selectedCategories: [chips] }))
+    }else{
+      dispatch(selectState({...general, selectedCategories: [...general.selectedCategories, chips] }))
+    }
   };
-  console.log('gtx', general.selectedCategories)
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -48,10 +51,10 @@ export default function CategoryChips() {
     if(!creation.loading){
       setTimeout(()=>{
         setOpenAddCategory(false)
-      },1000)
+      },500)
     }
   },[creation.loading])
-  console.log('dx',data)
+
   const AddCategoryPopupContent =
     <>
       <Typography variant='h6' mb={2}>Add a category</Typography>
@@ -61,14 +64,17 @@ export default function CategoryChips() {
         size="small"
         value={addCategory}
         onChange={(e) => setAddCategory(e.target.value)}
-        onKeyDown={handleKeyPress} />
-        {data && <CircularProgress />}
+        onKeyDown={handleKeyPress} sx={{width:'80%'}}/>
+     
         </Stack>
     </>
+React.useEffect(()=>{
+  setAddCategory('')
+},[openAddCategory])
 
   return (
     <Stack display={'flex'} direction={'row'} justifyContent={'flex-start'}>
-      <Typography my={'auto'} ml={3}>Categories :</Typography>
+      <Typography my={'auto'} >Categories :</Typography>
       <Paper
         sx={{
           display: 'flex',
@@ -89,14 +95,14 @@ export default function CategoryChips() {
                 size='small'
                 label={item.name}
                 onClick={handleSelectChips(item)}
-                disabled={general.selectedCategories.length > 2 || general.selectedCategories.includes(item.name)}
+                disabled={general.selectedCategories.length > 2 || general.selectedCategories.find((x)=>x.name==item.name)}
                 color={general.selectedCategories.includes(item.name) ? 'success' : ''}
               />
             </ListItem>
           );
         })}
         <AddIcon sx={{ m: "auto",cursor:'pointer' }} onClick={() => setOpenAddCategory(true)} />
-        {openAddCategory && <MyPopup open={openAddCategory} setOpen={setOpenAddCategory} content={AddCategoryPopupContent} addStyles={{width:{md:'35%', lg:'35%', sm:'60%'}}}/>}
+         <MyPopup open={openAddCategory} setOpen={setOpenAddCategory} content={AddCategoryPopupContent} addStyles={{width:{md:'35%', lg:'35%', sm:'60%'}}}/>
       </Paper>
     </Stack>
   );

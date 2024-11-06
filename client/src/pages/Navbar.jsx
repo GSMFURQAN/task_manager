@@ -14,13 +14,15 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Logout'];
 
 function Navbar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+
     const navigate = useNavigate()
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -40,9 +42,9 @@ function Navbar() {
     const handleMenuNavigation = (menu) => {
         if (menu === 'Logout') {
             localStorage.removeItem('token')
-            setTimeout(()=>{
+            setTimeout(() => {
                 navigate('/login')
-            },1000)
+            }, 1000)
         }
     }
 
@@ -51,14 +53,14 @@ function Navbar() {
             {/* <Container maxWidth="xl"> */}
             <  >
                 <Stack display={'flex'} justifyContent={'space-between'} direction={'row'} width={'97%'} p={1} mx={{ sm: 1, md: 3, lg: 3, xl: 3 }}>
-                    <Box>
-                        <AdbIcon sx={{ mr: 1 }} />
+                    <Stack spacing={3} direction={'row'}>
+                        <img width={36} height={36} src={`to-do-list.png`} />
                         <Typography
                             noWrap
                             component="a"
                             href="#app-bar-with-responsive-menu"
+                            style={{ margin: 'auto 12px' }}
                             sx={{
-                                mr: 2,
                                 fontWeight: 600,
                                 color: 'inherit',
                                 textDecoration: 'none',
@@ -66,12 +68,14 @@ function Navbar() {
                         >
                             Task Manager
                         </Typography>
-                    </Box>
+                    </Stack>
 
-                    <Box>
+                    <Stack direction={'row'} spacing={2}>
+                        <Typography fontSize={'14px'} style={{ margin: 'auto 6px' }}
+                        >{dayjs().format('dddd DD-MM-YYYY')}</Typography>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar sx={{ width: 36, height: 36 }} alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                <img width={36} height={36} src={`https://robohash.org/${Math.random() / 100}.png`} />
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -91,12 +95,12 @@ function Navbar() {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={()=>handleMenuNavigation(setting)}>
+                                <MenuItem key={setting} onClick={() => handleMenuNavigation(setting)}>
                                     <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
-                    </Box>
+                    </Stack>
                 </Stack>
             </>
             {/* </Container> */}

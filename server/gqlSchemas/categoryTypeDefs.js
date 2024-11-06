@@ -6,6 +6,7 @@ categories: [Category]
 type Mutation{
 createCategory(newCategory:categoryInput):Category
 editCategory(editedCategory:categoryInput):Category
+deleteCategory(_id:String):String
 }
 
 type Category{

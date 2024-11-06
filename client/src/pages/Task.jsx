@@ -13,34 +13,45 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import dayjs from "dayjs";
 import { useMutation } from "@apollo/client";
-import { COMPLETE_TASK } from "../gqlQueries/Mutations";
+import { COMPLETE_TASK, DELETE_TASK } from "../gqlQueries/Mutations";
+import AddTask from "../MyComponents/AddTask";
 
 const Task = ({ todo, index }) => {
     const general = useSelector((state) => state.general)
     const dispatch = useDispatch();
     const [selectedId, setSelectedId] = React.useState();
-const [completeTask] = useMutation(COMPLETE_TASK, {refetchQueries:['getFilteredTasks']})
+    const [openEdit, setOpenEdit] = useState(false)
+    const [completeTask] = useMutation(COMPLETE_TASK, { refetchQueries: ['getFilteredTasks'] })
+    const [deleteTask] = useMutation(DELETE_TASK, {
+        refetchQueries: ['getFilteredTasks']
+    })
+
+
     const handleEditTodo = async (id) => {
 
     };
 
-    const handleDeleteTodo = async (id) => {
-
+    const handleDeleteTask = async (id) => {
+        deleteTask({
+            variables: {
+                id: id
+            }
+        })
     };
     const handleChangeDone = async (id, done) => {
-completeTask({
-    variables:{
-        taskvalues:{
-            _id:id,
-            done: done ? false :true
-        }
-    }
-})
+        completeTask({
+            variables: {
+                taskvalues: {
+                    _id: id,
+                    done: done ? false : true
+                }
+            }
+        })
     };
     const handleAddNewTodo = () => {
 
     };
-    console.log('dtx', todo.task, dayjs(Number(todo.dueDate)).diff(dayjs(), "hours") )
+
     return (
         <div style={{ width: '100%' }}>
             {/* <Divider /> */}
@@ -49,7 +60,7 @@ completeTask({
                 key={todo.id}
                 borderRadius={4}
                 mx={1}
-                px={2}
+                px={1.5}
                 onMouseOver={() => setSelectedId(todo._id)}
                 onMouseLeave={() => setSelectedId(todo._id)}
             >
@@ -70,13 +81,14 @@ completeTask({
                                 my={"auto"}
                                 style={{
                                     textDecoration: todo.done ? "line-through" : "none",
+                                    textTransform: 'capitalize'
                                 }}
                                 variant="h6"
                                 fontSize={13}
                                 color={`${todo?.done
                                     ? "green"
                                     : dayjs(Number(todo.dueDate)).diff(dayjs(), "hours") <= 0
-                                    ? "red"
+                                        ? "red"
                                         : "cyan"
                                     }`}
                             >
@@ -85,17 +97,21 @@ completeTask({
                         </Stack>
                         <Typography
                             my={"auto"}
-                            maxWidth={{ xs: 100, sm: 200 }}
                             fontSize={12}
-                        >
-                            Due date:  { dayjs(Number(todo?.dueDate)).format('DD-MM-YYYY')}
-                            {/* {moment(todo.dueDate).format("DD MMMM YYYY , hh:mm a")} */}
+                        >Due date: <span style={{
+                            color: todo?.done
+                                ? "green"
+                                : dayjs(Number(todo.dueDate)).diff(dayjs(), "hours") <= 0
+                                    ? "red"
+                                    : "cyan"
+                        }}>
+                                {dayjs(Number(todo?.dueDate)).format('DD-MM-YYYY')}
+                            </span>
                         </Typography>
                     </Stack>
 
                     <Stack
                         // width={{ xl: 600, lg: 520, md: 520, sm: 400, xs: 300 }}
-                        my={0.5}
                         display={'flex'}
                         direction={'row'}
                         justifyContent={'space-between'}
@@ -118,15 +134,16 @@ completeTask({
                 //   onClick={()=>dispatch(selectView({...general, imageGridModal : true}))}
                 />
                 </Badge>} */}
-                    <Stack display={'flex'} direction={'row'}  spacing={2}>
-                    <EditIcon fontSize='small'/>
-                    <DeleteIcon fontSize="small" sx={{cursor:'pointer'}} onClick={()=>{}} />
-                </Stack>
+                        <Stack display={'flex'} direction={'row'} spacing={2}>
+                            <EditIcon fontSize='small' sx={{ cursor: 'pointer' }} onClick={() => setOpenEdit(true)} />
+                            <DeleteIcon fontSize="small" sx={{ cursor: 'pointer' }} onClick={() => handleDeleteTask(todo._id)} />
+                        </Stack>
                     </Stack>
                 </Stack>
                 {/* <ImageGrid media={todo.docs} /> */}
             </Stack>
-            <div style={{border:'0.1px solid gray',margin:'0px 6px'}}></div> 
+            <div style={{ border: '0.1px solid gray', margin: '0px 6px' }}></div>
+            {<AddTask open={openEdit} setOpen={setOpenEdit} editData={{ ...todo, isEdit: true }} />}
         </div>
     );
 };

@@ -24,7 +24,8 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_ALL_CATEGORIES } from "../gqlQueries/Quries";
-import { CREATE_TASK } from "../gqlQueries/Mutations";
+import { CREATE_TASK, EDIT_TASK } from "../gqlQueries/Mutations";
+import dayjs from "dayjs";
 
 const style = {
     position: "absolute",
@@ -38,55 +39,50 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-const VisuallyHiddenInput = styled("input")({
-    clip: "rect(0 0 0 0)",
-    clipPath: "inset(50%)",
-    height: 1,
-    overflow: "hidden",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    whiteSpace: "nowrap",
-    width: 1,
-});
 
-const AddTask = ({ id, selectedDate, open, setOpen }) => {
+const AddTask = ({ id, selectedDate, open, setOpen, editData }) => {
 
     const [parentDate, setParentDate] = useState("");
     const [fileUploadProgress, setFileUploadProgress] = useState(false);
     const [tabs, setTabs] = useState([]);
     const userData = JSON.parse(sessionStorage.getItem("account"));
     const { data, loading, error } = useQuery(GET_ALL_CATEGORIES)
-    const [createTask, task] = useMutation(CREATE_TASK,{
-        refetchQueries:['getFilteredTasks']
+    const [createTask, task] = useMutation(CREATE_TASK, {
+        refetchQueries: ['getFilteredTasks']
     })
-    console.log('gxxx', data)
+    const [editTask, editedTask] = useMutation(EDIT_TASK, {
+        refetchQueries: ['getFilteredTasks']
+    })
     const [goalData, setGoalData] = React.useState({
-        task: "",
+        task: editData?.isEdit ? editData.task : "",
         done: false,
-        note: "",
-        dueDate: "",
-        category: "",
+        note: editData?.isEdit ? editData.note : "",
+        dueDate: editData?.isEdit ? dayjs(Number(editData.dueDate)).format("YYYY-MM-DDTHH:mm") : dayjs().add(1, 'day').hour(10).minute(0),
+        category: editData?.isEdit ? editData.category : "",
     });
-    console.log('sux',)
 
     const handleAdd = async () => {
-        createTask({
-            variables: {
-                newTask: {
-                    ...goalData,
+        editData?.isEdit ?
+            editTask({
+                variables: {
+                    task: {
+                        _id: editData._id,
+                        taskDetails: goalData
+                    }
                 }
-            }
-        })
-    };
-
-    useEffect(() => {
-        if (!task.loading) {
-            setTimeout(()=>{
+            })
+            :
+            createTask({
+                variables: {
+                    newTask: {
+                        taskDetails: goalData,
+                    }
+                }
+            })
+            setTimeout(() => {
                 setOpen(false)
-            },1000)
-        }
-    }, [task.loading])
+            }, 1000)
+    };
 
     useEffect(() => {
         return () => { };
@@ -102,7 +98,7 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                 }}
             >
                 <Box sx={style}>
-                    <Typography variant="h6" textTransform={'capitalize'} mb={2}>Add your task</Typography>
+                    <Typography variant="h6" textTransform={'capitalize'} mb={2}>{editData?.isEdit ? 'Edit' : 'Add'} your task</Typography>
                     <Stack display={"flex"} direction={"column"} spacing={2}>
                         <Select
                             size="small"
@@ -115,7 +111,7 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                             labelId="demo-select-small-label"
                             id="demo-select-small"
                         >
-                            {data && data.categories.map((option) => (
+                            {data && data.categories.filter((x)=>x.name != 'Today').map((option) => (
                                 <MenuItem key={option._id} value={option.name}>
                                     {option.name}
                                 </MenuItem>
@@ -136,7 +132,7 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                             <Box>
                                 <DemoContainer components={['DateTimePicker']}  >
                                     <DateTimePicker label="DueDate Date" sx={{ maxWidth: { md: '50%', sm: '80%', lg: '60%' } }}
-                                        value={goalData.e}
+                                        value={dayjs(goalData?.dueDate)}
                                         onChange={(e) => setGoalData({ ...goalData, dueDate: e.$d })}
                                     />
                                 </DemoContainer>
@@ -166,7 +162,7 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                     >
                         <Button
                             variant="outlined"
-
+                            onClick={() => setOpen(false)}
                             color="error"
                         >
                             Close
@@ -176,7 +172,7 @@ const AddTask = ({ id, selectedDate, open, setOpen }) => {
                             onClick={() => handleAdd()}
                             color="primary"
                         >
-                            {!task.loading ? "Add" : "Creating new task..."}
+                            {editData?.isEdit ? "Update" : "Create"}
                         </Button>
                     </Stack>
 

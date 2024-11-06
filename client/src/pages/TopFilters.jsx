@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -17,6 +17,8 @@ import { Height } from '@mui/icons-material';
 import { useMutation } from '@apollo/client';
 import { CREATE_CAR } from '../gqlQueries/Mutations';
 import AddTask from '../MyComponents/AddTask';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectState } from '../redux/generalSlice';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: '#fff',
@@ -31,53 +33,58 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const TopFilters = () => {
     const [open, setOpen] = useState(false)
-    // const [createCar, { data, loadind, error }] = useMutation(CREATE_CAR,{
-    //     refetchQueries:[
-    //         'getAllUsers'
-    //     ]
-    // })
+    const general = useSelector((state)=>state.general)
+const [dateFilters, setDateFilters] = useState({
+    fromDate:dayjs().startOf('day').toDate(),
+    toDate:''
+})
+const dispatch = useDispatch()
     const handleAddTask = () => {
-       setOpen(true)
+        setOpen(true)
     }
-return (
-    <div>
-        <Box>
-            <Grid container spacing={2} >
-                <Grid size={9} pl={2}>
-                    <Item >
-                        <Stack display={'flex'} direction={'row'} spacing={8} mx={3}>
+
+ useEffect(()=>{
+    dispatch(selectState({...general, dateFilters}))
+ },[dateFilters])
+    return (
+        <div style={{ padding: '3px 0px' }}>
+            <Stack direction={'row'}>
+                <Stack display={'flex'} direction={'column'} spacing={1} width={{ lg: '70%', md: '70%', sm: '96%', xs: '96%' }} ml={{ xs: 1, sm: 1, md: 4, lg: 4 }}>
+                    <Stack display={'flex'} direction={{ xs: 'row', sm: 'row' }}>
+
+                        <Stack direction={{ lg: 'row', md: 'row', sm: 'column', xs: 'column' }} display='flex' justifyContent='space-between' width={{ lg: '100%', md: '100%', sm: '60%', xs: '60%' }} >
+
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <Box>
-                                    <DemoContainer components={['DateTimePicker']}  >
-                                        <DateTimePicker label="From Date" style={{ height: '14px' }} />
+                                <Box mx={1}>
+                                    <DemoContainer components={['DateTimePicker']}   >
+                                        <DateTimePicker label="From Date"   value={dayjs(dateFilters?.fromDate)}
+                                        onChange={(e) => setDateFilters({ ...dateFilters, fromDate: e.$d })}/>
                                     </DemoContainer>
                                 </Box>
-                                <Box>
-                                    <DemoContainer components={['DateTimePicker']}>
-                                        <DateTimePicker label="To Date" size='sm' />
+                                <Box >
+                                    <DemoContainer components={['DateTimePicker']} >
+                                        <DateTimePicker label="To Date"   value={dayjs(dateFilters?.toDate)}
+                                        onChange={(e) => setDateFilters({ ...dateFilters, toDate: e.$d })}/>
                                     </DemoContainer>
                                 </Box>
                             </LocalizationProvider>
                             <div style={{ margin: 'auto' }}>
                                 <MyButton text={'Add Task'} color={'primary'} size={'md'} handleClick={handleAddTask} startIcon={<AddIcon />} />
                             </div>
-
                         </Stack>
-                        <Stack mt={1.5}>
-                            <CategoryChips />
-                        </Stack>
-                    </Item>
-                </Grid>
-                <Grid size={3} pr={1}>
-                    <Item>
-                        <Stats />
-                    </Item>
-                </Grid>
-            </Grid>
-        </Box>
-        <AddTask open={open} setOpen={setOpen}/>
-    </div>
-)
+                        <Box display={{ xs: 'block', sm: 'block', lg: 'none', md: 'none' }}>
+                            <Stats />
+                        </Box>
+                    </Stack>
+                    <CategoryChips />
+                </Stack>
+                <Box display={{ xs: 'none', sm:'none', md:'block',lg:'block' }}>
+                    <Stats />
+                </Box>
+            </Stack>
+            <AddTask open={open} setOpen={setOpen} />
+        </div>
+    )
 }
 
 export default TopFilters
