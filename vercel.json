@@ -14,5 +14,10 @@
   "routes": [
     { "src": "/graphql", "dest": "/server/server.js" },
     { "src": "/(.*)", "dest": "/client/build/$1" }
-  ]
+  ],
+  "build": {
+    "env": {
+      "CI": "false"
+    }
+  }
 }
