@@ -1,7 +1,10 @@
 {
   "version": 2,
-  "builds": [{ "src": "*.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "/" }],
+ 
+  "routes": [
+    { "src": "/graphql", "dest": "/server/server.js" },
+    { "src": "/(.*)", "dest": "/client/build/$1" }
+  ],
   "build": {
     "env": {
       "CI": "false"
