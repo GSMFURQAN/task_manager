@@ -2,7 +2,7 @@
   "version": 2,
  
   "routes": [
-    { "src": "/graphql", "dest": "/server/server.js" },
+    { "src": "^/graphql", "dest": "/server/server.js" },
     { "src": "/(.*)", "dest": "/client/build/$1" }
   ],
   "build": {
