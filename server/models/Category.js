@@ -5,6 +5,10 @@ const categorySchema = new mongoose.Schema({
         type :String,
         required:true
     },
+    userId:{
+        type :String,
+        required:true
+    },
 })
 
 mongoose.model('Category', categorySchema);

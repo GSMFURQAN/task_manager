@@ -6,10 +6,10 @@ const Task = mongoose.model("Task");
 
 export const taskResolvers = {
   Query: {
-    tasks: async (_, { _id }) => await Task.find({ userId: _id }),
-    filteredTasks: async (_, { category, fromDate, toDate }, userId) => {
+    tasks: async (_, { _id },{userId}) => await Task.find({ userId }),
+    filteredTasks: async (_, { category, fromDate, toDate }, {userId}) => {
       const query = {};
-
+query.userId= userId;
       if (category == "Today") {
         query.dueDate = {
           $gt: dayjs().startOf("day").toDate(),
@@ -26,17 +26,17 @@ export const taskResolvers = {
           };
         }
       }
-      console.log("dexx", category, fromDate, toDate, query);
       const tasks = await Task.find({
         ...query,
       }).sort({ dueDate:1 });
+      console.log("dexx",userId,query, category, tasks);
       return tasks;
     },
   },
 
   Mutation: {
     // ----Create Task-------------------------------------------------------------------------------
-    createTask: async (_, { newTask }, userId) => {
+    createTask: async (_, { newTask }, {userId}) => {
       console.log("User ID in createCar:", userId); // Log userId in the resolver
       if (!userId) {
         throw new Error("You're not logged in!");

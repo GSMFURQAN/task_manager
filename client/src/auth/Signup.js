@@ -39,6 +39,7 @@ const [signupUser,{data, error, loading}] = useMutation(SIGNUP_USER)
         }
     })
     setOpenSnack({...openSnack, open:true})
+     navigate('/')
   };
 console.log('dse',data?.user?.name)
   return (

@@ -15,6 +15,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { useApolloClient } from '@apollo/client';
 
 
 const settings = ['Logout'];
@@ -22,6 +23,7 @@ const settings = ['Logout'];
 function Navbar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const client = useApolloClient();
 
     const navigate = useNavigate()
     const handleOpenNavMenu = (event) => {
@@ -39,9 +41,11 @@ function Navbar() {
         setAnchorElUser(null);
     };
 
-    const handleMenuNavigation = (menu) => {
+    const handleMenuNavigation = async(menu) => {
         if (menu === 'Logout') {
             localStorage.removeItem('token')
+            await client.clearStore();
+
             setTimeout(() => {
                 navigate('/login')
             }, 1000)

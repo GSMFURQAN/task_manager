@@ -111,7 +111,7 @@ const AddTask = ({ id, selectedDate, open, setOpen, editData }) => {
                             labelId="demo-select-small-label"
                             id="demo-select-small"
                         >
-                            {data && data.categories.filter((x)=>x.name != 'Today').map((option) => (
+                            {data && data?.categories?.filter((x)=>x.name != 'Today').map((option) => (
                                 <MenuItem key={option._id} value={option.name}>
                                     {option.name}
                                 </MenuItem>

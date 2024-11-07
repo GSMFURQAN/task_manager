@@ -5,7 +5,11 @@ const Task = mongoose.model("Task");
 export const categoryResolver = {
   Query: {
     // category:async(_,{_id})=>await Category.find({userId:_id})
-    categories: async (_, { _id }) => await Category.find({ userId: _id }),
+    categories: async (_, { _id },{userId}) => {
+      const categories = await Category.find({ userId })
+    console.log('ccc', categories, userId)
+    return categories
+  }
   },
 
   Mutation: {

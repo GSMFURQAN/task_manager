@@ -9,7 +9,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectState } from '../redux/generalSlice';
 import MyPopup from '../MyComponents/MyPopup';
-import { useMutation, useQuery } from '@apollo/client';
+import {  useMutation, useQuery } from '@apollo/client';
 import { CREATE_CATEGORY } from '../gqlQueries/Mutations';
 import { GET_ALL_CATEGORIES } from '../gqlQueries/Quries';
 const ListItem = styled('li')(({ theme }) => ({
@@ -19,9 +19,12 @@ const ListItem = styled('li')(({ theme }) => ({
 export default function CategoryChips() {
   const dispatch = useDispatch()
   const general = useSelector(state => state.general)
+
   const [addCategory, setAddCategory] = React.useState('')
   const [openAddCategory, setOpenAddCategory] = React.useState(false)
-  const { data, loading, error } = useQuery(GET_ALL_CATEGORIES)
+  const { data, loading, error } = useQuery(GET_ALL_CATEGORIES ,{
+    fetchPolicy: 'network-only'
+  })
   const [createCategory, creation] = useMutation(CREATE_CATEGORY,{
     refetchQueries:['GET_CATEGORIES']
   })
@@ -55,6 +58,7 @@ export default function CategoryChips() {
     }
   },[creation.loading])
 
+
   const AddCategoryPopupContent =
     <>
       <Typography variant='h6' mb={2}>Add a category</Typography>
@@ -86,7 +90,7 @@ React.useEffect(()=>{
         }}
         component="ul"
       >
-        { data && data.categories.map((item) => {
+        { data && data?.categories?.map((item) => {
 
           return (
             <ListItem key={item._id} >

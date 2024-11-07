@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
 import {
   Alert,
   Box,
@@ -15,6 +15,8 @@ import { SIGNIN_USER } from "../gqlQueries/Mutations";
 
 export default function Login() {
   const navigate = useNavigate();
+  const client = useApolloClient();
+
   const searchString = window.location.href;
   const [signinUser, {data, loading, error}] = useMutation(SIGNIN_USER,{
     onCompleted(data){
@@ -22,10 +24,8 @@ export default function Login() {
           navigate("/");
     },
     onError(error){
-        console.log('etx',error)
     }
   });
-console.log('etxxx',data,error)
   const editUser = searchString.includes("editUser");
   const { id } = useParams();
   const [details, setDetails] = useState({
@@ -49,6 +49,7 @@ console.log('etxxx',data,error)
         userSignIn: details,
       },
     })
+    client.clearStore();
   };
 
   return (
