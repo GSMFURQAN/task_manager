@@ -7,7 +7,7 @@ const Home = () => {
     const token =  localStorage.getItem('token')
     const navigate = useNavigate()
     useEffect(()=>{
-    if(token == 'undefined'){
+    if(!token ){
         navigate('/login')
     }
     },[])
