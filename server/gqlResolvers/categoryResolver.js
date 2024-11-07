@@ -13,7 +13,7 @@ export const categoryResolver = {
   },
 
   Mutation: {
-    createCategory: async (_, { newCategory }, userId) => {
+    createCategory: async (_, { newCategory }, {userId}) => {
       console.log("fext", newCategory, userId);
       if (!userId) {
         throw new Error("You're not logged in!");
@@ -26,13 +26,13 @@ export const categoryResolver = {
       return "Category created successfully";
     },
 
-    editCategory: async (_, { editedCategory }, userId) => {
+    editCategory: async (_, { editedCategory }, {userId}) => {
       if (!userId) {
         throw new Error("You're not logged in!");
       }
       const oldCategory = await Category.find({ _id: editedCategory._id });
       await Task.updateMany(
-        { category: oldCategory[0]?.name }, // Filter criteria
+        { category: oldCategory[0]?.name, userId }, // Filter criteria
         { $set: { category: editedCategory.name } } // Update operation
       );
       const newTask = await Category.updateOne(
@@ -42,10 +42,10 @@ export const categoryResolver = {
       return "Category updated successfully";
     },
 
-    deleteCategory: async(_,{_id},userId)=>{
+    deleteCategory: async(_,{_id},{userId})=>{
       const categoryName = await Category.find({ _id });
       await Category.findByIdAndDelete(_id)
-      await Task.deleteMany({category: categoryName[0]?.name})
+      await Task.deleteMany({userId,category: categoryName[0]?.name})
     }
   },
 };

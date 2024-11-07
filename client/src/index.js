@@ -4,18 +4,27 @@ import './index.css';
 import App from './App';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-const client = new ApolloClient({
+const httpLink = createHttpLink({
   uri: '/graphql',
-  cache: new InMemoryCache(),
-  headers:{
-    authorization:localStorage.getItem('token')||""
-  }
 });
+
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('token');
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? token : "",
+    }
+  };
+});
+const client = new ApolloClient({
+  link: authLink.concat(httpLink), // Combine the auth link and HTTP link
+  cache: new InMemoryCache(),
+});
+const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <Provider store={store}>

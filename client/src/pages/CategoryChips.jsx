@@ -19,12 +19,9 @@ const ListItem = styled('li')(({ theme }) => ({
 export default function CategoryChips() {
   const dispatch = useDispatch()
   const general = useSelector(state => state.general)
-
   const [addCategory, setAddCategory] = React.useState('')
   const [openAddCategory, setOpenAddCategory] = React.useState(false)
-  const { data, loading, error } = useQuery(GET_ALL_CATEGORIES ,{
-    fetchPolicy: 'network-only'
-  })
+  const { data, loading, error } = useQuery(GET_ALL_CATEGORIES )
   const [createCategory, creation] = useMutation(CREATE_CATEGORY,{
     refetchQueries:['GET_CATEGORIES']
   })
