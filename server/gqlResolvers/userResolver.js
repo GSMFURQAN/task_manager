@@ -2,6 +2,7 @@ import brcypt from "bcryptjs";
 import mongoose from "mongoose";
 import jwt from 'jsonwebtoken'
 import { GraphQLError } from 'graphql'
+// import { JWT_SECRET } from "../config.js";
 
 const User = mongoose.model("User");
 const Car = mongoose.model("Car")

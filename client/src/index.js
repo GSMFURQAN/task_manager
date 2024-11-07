@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
 
@@ -13,7 +13,7 @@ const client = new ApolloClient({
   uri: '/graphql',
   cache: new InMemoryCache(),
   headers:{
-    authorization:localStorage.getItem('token')
+    authorization:localStorage.getItem('token')||""
   }
 });
 

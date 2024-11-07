@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import { useSelector } from "react-redux";
 
 const Stats = () => {
-  const [category, setCategory] = useState('')
+  const [category, setCategory] = useState()
   const general = useSelector(state => state.general)
   const categoryList = useQuery(GET_ALL_CATEGORIES)
   const filteredTasks = useQuery(FILTERED_TASKS, {
@@ -85,14 +85,14 @@ legend: {
       }));
     }
   }, [category, completed, pending, elapsed]);
+
+  useEffect(()=>{
+    setCategory(general?.selectedCategories[0]?.name)
+  },[general.selectedCategories])
   const theme = useTheme();
   const isNotSmallScreen = useMediaQuery(theme.breakpoints.up("md"));
 
-  const [open, setOpen] = React.useState(false);
-  const [checked, setChecked] = React.useState(false);
-
   
-
   return (
     <div className="donut">
         <Stack direction={'row'} spacing={1} mx={{lg:4,md:4,sm:1,xs:1}}>
