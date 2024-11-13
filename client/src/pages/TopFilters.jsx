@@ -35,7 +35,8 @@ const TopFilters = () => {
     const [open, setOpen] = useState(false)
     const general = useSelector((state) => state.general)
     const [dateFilters, setDateFilters] = useState({
-        fromDate: dayjs().startOf('day').toDate(),
+        // fromDate: dayjs().startOf('day').toDate(),
+        fromDate: '',
         toDate: ''
     })
     const dispatch = useDispatch()
