@@ -3,7 +3,7 @@ import React from 'react'
 
 const MyButton = ({ color, size, text, handleClick,startIcon,endIcon }) => {
     return (
-        <div ><Button color={color} onClick={handleClick} startIcon={startIcon} >{text}</Button></div>
+     <Button color={color} onClick={handleClick} startIcon={startIcon} >{text}</Button>
     )
 }
 

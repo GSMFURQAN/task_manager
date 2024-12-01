@@ -90,10 +90,10 @@ const MainTabs = ({ item }) => {
             </Stack>
         </>
     )
-console.log('gex',general)
+
     return (
         <div key={item._id} style={{ maxHeight: '68vh', overflowY: 'auto' }}>
-            <Stack display={'flex'} direction={'row'} justifyContent={'space-between'} px={2} pt={1}>
+            <Stack display={'flex'} direction={'row'} justifyContent={'space-between'} px={2} pt={1}   position={'sticky'} top={0} bgcolor={"rgba(255, 255, 255, 0.99)"} zIndex={2}>
                 <CloseIcon onClick={() => handleClose(item)} sx={{ cursor: 'pointer' }} />
 
                 {openEdit ? <Stack display={'flex'} direction={'row'}><Input inputProps={'aria-label'} style={{ fontSize: '12px' }} value={categoryValue} onChange={(e) => setCategoryValue(e.target.value)} onKeyDown={(e) => handleKeyPress(e)} /> <CheckIcon cursor='pointer' fontSize='small' onClick={() => updateCategory()} /></Stack> : <Typography fontSize={14} fontWeight={'bold'}>{item.name}</Typography>}
@@ -106,7 +106,7 @@ console.log('gex',general)
                     }} />
                 </Stack>:<div></div>}
             </Stack>
-            <div style={{ border: '0.1px solid gray', margin: '4px 6px' }}></div>
+            <div style={{ border: '0.1px solid gray', margin: '0px 6px' }}></div>
 
             {data && data?.filteredTasks.length > 0 ? data?.filteredTasks?.map((todo, i) =>
                 <Stack  >
@@ -114,7 +114,10 @@ console.log('gex',general)
                 </Stack>
             )
                 :
-                <MyButton text={'Add Tasks'} handleClick={() => setOpenAdd(true)} />}
+                <div style={{display:'flex', justifyContent:'center', margin:'4%'}}>
+
+                <MyButton  text={'Add Tasks'} handleClick={() => setOpenAdd(true)} />
+                    </div>}
             <MyPopup open={openDelete} setOpen={setOpenDelete} content={deletePopupContent} />
             <AddTask open={openAdd} setOpen={setOpenAdd} />
         </div>

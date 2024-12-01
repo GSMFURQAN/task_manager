@@ -29,7 +29,6 @@ query.userId= userId;
       const tasks = await Task.find({
         ...query,
       }).sort({ dueDate:1 });
-      console.log("dexx",userId,query, category, tasks);
       return tasks;
     },
   },
@@ -41,7 +40,6 @@ query.userId= userId;
       if (!userId) {
         throw new Error("You're not logged in!");
       }
-      console.log("fexx", newTask);
       const task = new Task({
         ...newTask.taskDetails,
         // dueDate: new Date(newTask.taskDetails.dueDate).toISOString(),
