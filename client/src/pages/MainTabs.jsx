@@ -93,7 +93,7 @@ const MainTabs = ({ item }) => {
 
     return (
         <div key={item._id} style={{ maxHeight: '68vh', overflowY: 'auto' }}>
-            <Stack display={'flex'} direction={'row'} justifyContent={'space-between'} px={2} pt={1}   position={'sticky'} top={0} bgcolor={"rgba(255, 255, 255, 0.99)"} zIndex={2}>
+            <Stack display={'flex'} direction={'row'} justifyContent={'space-between'} px={2} pt={1}   position={'sticky'} top={0} bgcolor={"rgba(31, 28, 28, 0.99)"} zIndex={2}>
                 <CloseIcon onClick={() => handleClose(item)} sx={{ cursor: 'pointer' }} />
 
                 {openEdit ? <Stack display={'flex'} direction={'row'}><Input inputProps={'aria-label'} style={{ fontSize: '12px' }} value={categoryValue} onChange={(e) => setCategoryValue(e.target.value)} onKeyDown={(e) => handleKeyPress(e)} /> <CheckIcon cursor='pointer' fontSize='small' onClick={() => updateCategory()} /></Stack> : <Typography fontSize={14} fontWeight={'bold'}>{item.name}</Typography>}

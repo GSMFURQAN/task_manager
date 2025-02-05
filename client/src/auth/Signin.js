@@ -18,13 +18,12 @@ export default function Login() {
   const client = useApolloClient();
 
   const searchString = window.location.href;
-  const [signinUser, {data, loading, error}] = useMutation(SIGNIN_USER,{
-    onCompleted(data){
-        localStorage.setItem("token", data?.user?.token);
-          navigate("/");
+  const [signinUser, { data, loading, error }] = useMutation(SIGNIN_USER, {
+    onCompleted(data) {
+      localStorage.setItem("token", data?.user?.token);
+      navigate("/");
     },
-    onError(error){
-    }
+    onError(error) {},
   });
   const editUser = searchString.includes("editUser");
   const { id } = useParams();
@@ -43,13 +42,20 @@ export default function Login() {
     setDetails({ ...details, [e.target.name]: e.target.value });
   };
 
+  const handleEnterPress = (event) => {
+    if (event.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
   const handleSubmit = () => {
     signinUser({
       variables: {
         userSignIn: details,
       },
-    })
+    });
     client.clearStore();
+    navigate("/");
   };
 
   return (
@@ -61,6 +67,7 @@ export default function Login() {
       m={"auto"}
       my={4}
       p={{ xs: 1, lg: 4, md: 4 }}
+      onKeyDown={handleEnterPress} 
     >
       <Stack display="flex" direction={"column"} alignItems={"center"} mt={4}>
         <Typography variant="h5" fontWeight={"bold"} m={"auto"}>
